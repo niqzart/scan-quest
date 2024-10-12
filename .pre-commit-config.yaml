@@ -21,16 +21,19 @@ repos:
     rev: v1.6.0
     hooks:
       - id: autoflake
+        types_or: [python, pyi]
 
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
+        types_or: [python, pyi]
 
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
       - id: black
+        types_or: [python, pyi]
 
   - repo: local
     hooks:
