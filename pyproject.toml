@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "scan-quest"
 version = "0.1.0"
-description = "Web application for organizing quests based on scannubg QR-codes"
+description = "Web application for organizing quests based on scanning QR-codes"
 authors = ["niqzart <niqzart@gmail.com>"]
 readme = "README.md"
 package-mode = false
