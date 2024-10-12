@@ -7,7 +7,7 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.13"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
@@ -40,7 +40,7 @@ wemake-python-styleguide = "0.18.0"
 
 [tool.isort]
 profile = "black"
-py_version = 312
+py_version = 312  # TODO make this 313
 combine_as_imports = true
 known_first_party = ["app", "tests"]
 no_lines_before = "LOCALFOLDER"
