@@ -40,7 +40,7 @@ repos:
       - id: flake8
         name: flake8
         language: system
-        entry: flake8
+        entry: flake8 --config=backend/.flake8
         types_or: [python, pyi]
 
   - repo: local
@@ -49,8 +49,7 @@ repos:
         name: mypy (full)
         language: system
         entry: mypy
-        args:
-          - "--strict"
+        args: ["--strict"]
         require_serial: true
         types_or: [python, pyi]
 
@@ -58,7 +57,8 @@ repos:
     rev: 1.8.3
     hooks:
       - id: poetry-check
-        files: ^(pyproject.toml|poetry.lock)$
+        args: ["--directory", "backend"]
       - id: poetry-lock
-        files: ^(pyproject.toml|poetry.lock)$
-        args: ["--no-update"]
+        args: ["--directory", "backend", "--no-update"]
+      - id: poetry-install
+        args: ["--directory", "backend"]
