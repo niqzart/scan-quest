@@ -12,6 +12,7 @@ uvicorn = "^0.31.1"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.35"}
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 pydantic-marshals = {version = "0.3.14", extras = ["sqlalchemy"]}
+pydantic-settings = "^2.5.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
@@ -58,6 +59,7 @@ line_length = 88
 
 [tool.mypy]
 strict = true
+plugins = ["pydantic.mypy"]
 
 [build-system]
 requires = ["poetry-core"]

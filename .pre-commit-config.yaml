@@ -49,8 +49,7 @@ repos:
       - id: mypy
         name: mypy (full)
         language: system
-        entry: mypy
-        args: ["--strict"]
+        entry: mypy --config=backend/pyproject.toml --strict
         require_serial: true
         types_or: [python, pyi]
 

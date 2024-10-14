@@ -9,7 +9,7 @@ from starlette.staticfiles import StaticFiles
 
 from app.common.sqlalchemy_ext import session_context
 from app.common.starlette_cors_ext import CorrectCORSMiddleware
-from app.config import POSTGRES_AUTOMIGRATE, Base, engine, sessionmaker
+from app.config import Base, engine, sessionmaker, settings
 
 
 async def reinit_database() -> None:  # pragma: no cover
@@ -20,7 +20,7 @@ async def reinit_database() -> None:  # pragma: no cover
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    if POSTGRES_AUTOMIGRATE:
+    if settings.postgres_automigrate:
         await reinit_database()
 
     yield
