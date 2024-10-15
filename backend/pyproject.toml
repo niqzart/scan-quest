@@ -59,7 +59,10 @@ line_length = 88
 
 [tool.mypy]
 strict = true
-plugins = ["pydantic.mypy"]
+plugins = [
+    "pydantic.mypy",
+    "pydantic_marshals.mypy.plugin"
+]
 
 [build-system]
 requires = ["poetry-core"]
