@@ -5,7 +5,11 @@ from starlette.testclient import TestClient
 
 from app.main import app
 
-pytest_plugins = ("anyio",)
+pytest_plugins = (
+    "anyio",
+    "tests.common.active_session",
+    "tests.common.mock_stack",
+)
 
 
 @pytest.fixture(scope="session")
