@@ -1,4 +1,3 @@
-from collections.abc import AsyncIterator
 from uuid import UUID
 
 import pytest
@@ -7,13 +6,9 @@ from starlette.testclient import TestClient
 from app.models.quests_db import Quest
 from tests.common.active_session import ActiveSession
 from tests.common.assert_contains_ext import assert_response
-from tests.common.polyfactory_ext import BaseModelFactory
+from tests.factories import QuestInputFactory
 
 pytestmark = pytest.mark.anyio
-
-
-class QuestInputFactory(BaseModelFactory[Quest.InputSchema]):
-    __model__ = Quest.InputSchema
 
 
 async def test_quest_creation(
@@ -31,15 +26,6 @@ async def test_quest_creation(
     async with active_session():
         quest = await Quest.find_first_by_id(quest_id)
         assert quest is not None
-        await quest.delete()
-
-
-@pytest.fixture()
-async def quest(active_session: ActiveSession) -> AsyncIterator[Quest]:
-    async with active_session():
-        quest = await Quest.create(**QuestInputFactory.build_python())
-    yield quest
-    async with active_session():
         await quest.delete()
 
 
