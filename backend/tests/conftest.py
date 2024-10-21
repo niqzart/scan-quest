@@ -5,6 +5,7 @@ from starlette.testclient import TestClient
 
 from app.common.cryptography_ext import generate_secure_code
 from app.main import app
+from app.models.findings_db import Finding
 from app.models.goals_db import Goal
 from app.models.participants_db import Participant
 from app.models.quests_db import Quest
@@ -65,3 +66,16 @@ async def participant(
     yield participant
     async with active_session():
         await participant.delete()
+
+
+@pytest.fixture()
+async def finding(
+    active_session: ActiveSession,
+    participant: Participant,
+    goal: Goal,
+) -> AsyncIterator[Finding]:
+    async with active_session():
+        finding = await Finding.create(participant_id=participant.id, goal_id=goal.id)
+    yield finding
+    async with active_session():
+        await finding.delete()
