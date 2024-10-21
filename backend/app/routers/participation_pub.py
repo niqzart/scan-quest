@@ -1,13 +1,26 @@
+from collections.abc import Sequence
+from typing import cast
+
 from fastapi import APIRouter, HTTPException
+from sqlalchemy import select
 
 from app.common.cryptography_ext import generate_secure_code
+from app.common.sqlalchemy_ext import db
 from app.models.findings_db import Finding
+from app.models.goals_db import Goal
 from app.models.participants_db import Participant
+from app.models.quests_db import Quest
 from app.routers.dependencies.authorization import AuthCookieSetter, ParticipantByCookie
 from app.routers.dependencies.goals_dep import GoalByCode
 from app.routers.findings_api import finding_already_exists_exception
 
 router = APIRouter(tags=["participation"])
+
+
+@router.get("/quests", response_model=Quest.ResponseSchema)
+async def retrieve_quest_by_code(goal: GoalByCode) -> Quest:
+    return cast(Quest, await goal.awaitable_attrs.quest)
+
 
 username_already_taken_exception = HTTPException(
     status_code=409, detail="Username is already taken"
@@ -58,3 +71,17 @@ async def add_goal_to_my_findings(
         goal_id=goal.id,
     )
     # TODO return something (like hints) in the future
+
+
+@router.get("/participants/me/quest", response_model=Quest.ResponseSchema)
+async def retrieve_current_quest_data(participant: ParticipantByCookie) -> Quest:
+    return cast(Quest, await participant.awaitable_attrs.quest)
+
+
+@router.get(
+    "/participants/me/found-goals",
+    response_model=list[Goal.PublicResponseSchema],
+)
+async def list_goals_found_by_me(participant: ParticipantByCookie) -> Sequence[Goal]:
+    stmt = select(Goal).join(Finding).filter(Finding.participant_id == participant.id)
+    return cast(Sequence[Goal], await db.get_all(stmt))

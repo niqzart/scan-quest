@@ -9,6 +9,7 @@ from app.models.findings_db import Finding
 from app.models.goals_db import Goal
 from app.models.participants_db import Participant
 from app.models.quests_db import Quest
+from app.routers.dependencies.authorization import auth_cookie_name
 from tests import factories
 from tests.common.active_session import ActiveSession
 
@@ -79,3 +80,11 @@ async def finding(
     yield finding
     async with active_session():
         await finding.delete()
+
+
+@pytest.fixture()
+async def authorized_client(client: TestClient, participant: Participant) -> TestClient:
+    return TestClient(
+        app=client.app,
+        cookies={auth_cookie_name: participant.auth_token},
+    )
