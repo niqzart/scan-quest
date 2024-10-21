@@ -42,14 +42,14 @@ async def test_quest_goals_listing(
 ) -> None:
     assert_response(
         client.get(f"/internal/quests/{quest.id}/goals"),
-        expected_json=[orm_to_json(Goal.ResponseSchema, goal)],
+        expected_json=[orm_to_json(Goal.InternalResponseSchema, goal)],
     )
 
 
 async def test_quest_goal_retrieving(client: TestClient, goal: Goal) -> None:
     assert_response(
         client.get(f"/internal/goals/{goal.id}"),
-        expected_json=orm_to_json(Goal.ResponseSchema, goal),
+        expected_json=orm_to_json(Goal.InternalResponseSchema, goal),
     )
 
 

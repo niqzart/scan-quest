@@ -21,4 +21,5 @@ class Goal(Base):
     code: Mapped[str] = mapped_column(String(code_length), index=True, unique=True)
 
     InputSchema = MappedModel.create()
-    ResponseSchema = InputSchema.extend(columns=[id, code])
+    PublicResponseSchema = InputSchema.extend(columns=[id])
+    InternalResponseSchema = PublicResponseSchema.extend(columns=[code])
