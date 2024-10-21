@@ -21,16 +21,18 @@ async def test_signing_up_by_code(
     client: TestClient,
     goal: Goal,
 ) -> None:
-    username: str = ParticipantInputFactory.build_json()["username"]
+    participant_data = ParticipantInputFactory.build_json()
 
     expected_created_at = datetime_utc_now()
 
     with freeze_time(expected_created_at):
         response = assert_response(
             client.post(
-                "/public/participants", json={"code": goal.code, "username": username}
+                "/public/participants",
+                params={"code": goal.code},
+                json=participant_data,
             ),
-            expected_json={"id": UUID, "quest_id": goal.quest_id, "username": username},
+            expected_json={"id": UUID, "quest_id": goal.quest_id, **participant_data},
             expected_cookies={auth_cookie_name: str},
         )
 
@@ -64,7 +66,7 @@ async def test_finding(
         assert_response(
             client.post(
                 "/public/participants/me/found-goals",
-                json={"code": goal.code},
+                params={"code": goal.code},
                 cookies={auth_cookie_name: participant.auth_token},
             ),
             expected_code=204,

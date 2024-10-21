@@ -1,6 +1,4 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, HTTPException
 
 from app.common.cryptography_ext import generate_secure_code
 from app.models.findings_db import Finding
@@ -22,18 +20,18 @@ username_already_taken_exception = HTTPException(
 )
 async def signup_by_code(
     goal: GoalByCode,
-    username: Annotated[Participant.UsernameType, Body()],
+    data: Participant.InputSchema,
     auth_cookie_setter: AuthCookieSetter,
 ) -> Participant:
     participant_by_username = await Participant.find_first_by_kwargs(
-        username=username,
+        username=data.username,
         quest_id=goal.quest_id,
     )
     if participant_by_username is not None:
         raise username_already_taken_exception
 
     participant = await Participant.create(
-        username=username,
+        **data.model_dump(),
         quest_id=goal.quest_id,
         auth_token=generate_secure_code(length=Participant.auth_token_length),
     )
