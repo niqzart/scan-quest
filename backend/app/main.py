@@ -10,13 +10,22 @@ from starlette.staticfiles import StaticFiles
 from app.common.sqlalchemy_ext import session_context
 from app.common.starlette_cors_ext import CorrectCORSMiddleware
 from app.config import Base, engine, sessionmaker, settings
-from app.routers import findings_api, goals_api, participants_api, quests_api
+from app.routers import (
+    findings_api,
+    goals_api,
+    participants_api,
+    participation_pub,
+    quests_api,
+)
 
 internal_router = APIRouter(prefix="/internal")
 internal_router.include_router(quests_api.router)
 internal_router.include_router(goals_api.router)
 internal_router.include_router(participants_api.router)
 internal_router.include_router(findings_api.router)
+
+public_router = APIRouter(prefix="/public")
+public_router.include_router(participation_pub.router)
 
 
 async def reinit_database() -> None:  # pragma: no cover
@@ -36,6 +45,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(docs_url=None, redoc_url=None, lifespan=lifespan)
 
 app.include_router(internal_router)
+app.include_router(public_router)
 
 app.mount("/openapi-static", StaticFiles(directory="openapi-static"), name="static")
 
