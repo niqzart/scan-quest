@@ -18,7 +18,7 @@ class Goal(Base):
     quest_id: Mapped[UUID] = mapped_column(ForeignKey(Quest.id, ondelete="CASCADE"))
     quest: Mapped[Quest] = relationship(passive_deletes=True)
 
-    code: Mapped[str] = mapped_column(String(code_length))
+    code: Mapped[str] = mapped_column(String(code_length), index=True, unique=True)
 
     InputSchema = MappedModel.create()
     ResponseSchema = InputSchema.extend(columns=[id, code])
