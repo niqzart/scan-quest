@@ -32,4 +32,4 @@ class Participant(Base):
     ]
 
     InputSchema = MappedModel.create(columns=[(username, UsernameType)])
-    ResponseSchema = InputSchema.extend(columns=[id])
+    ResponseSchema = InputSchema.extend(columns=[id, quest_id])

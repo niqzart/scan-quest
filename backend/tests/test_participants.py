@@ -23,7 +23,7 @@ async def test_participant_creation(
     participant_id = assert_response(
         client.post(f"/internal/quests/{quest.id}/participants", json=participant_data),
         expected_code=201,
-        expected_json={"id": UUID, **participant_data},
+        expected_json={"id": UUID, "quest_id": quest.id, **participant_data},
     ).json()["id"]
 
     async with active_session():
@@ -74,7 +74,11 @@ async def test_participant_updating(
         client.put(
             f"/internal/participants/{participant.id}", json=new_participant_data
         ),
-        expected_json={"id": participant.id, **new_participant_data},
+        expected_json={
+            "id": participant.id,
+            "quest_id": participant.quest_id,
+            **new_participant_data,
+        },
     )
 
 
