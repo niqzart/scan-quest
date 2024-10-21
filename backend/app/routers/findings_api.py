@@ -28,6 +28,7 @@ async def create_finding(
     )
     if finding is not None:
         raise finding_already_exists_exception
+
     await Finding.create(
         participant_id=participant.id,
         goal_id=goal.id,
@@ -54,6 +55,7 @@ async def delete_finding(
     )
     if finding is None:
         raise finding_not_found_exception
+
     await finding.delete()
 
 
