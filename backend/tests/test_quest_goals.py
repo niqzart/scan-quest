@@ -20,15 +20,17 @@ async def test_quest_goal_creation(
 ) -> None:
     goal_data = GoalInputFactory.build_json()
 
-    goal_id = assert_response(
+    real_data = assert_response(
         client.post(f"/internal/quests/{quest.id}/goals", json=goal_data),
         expected_code=201,
-        expected_json={"id": UUID, **goal_data},
-    ).json()["id"]
+        expected_json={"id": UUID, "code": str, **goal_data},
+    ).json()
+    goal_id, goal_code = real_data["id"], real_data["code"]
 
     async with active_session():
         goal = await Goal.find_first_by_id(goal_id)
         assert goal is not None
+        assert goal.code == goal_code
         await goal.delete()
 
 

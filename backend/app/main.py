@@ -10,11 +10,13 @@ from starlette.staticfiles import StaticFiles
 from app.common.sqlalchemy_ext import session_context
 from app.common.starlette_cors_ext import CorrectCORSMiddleware
 from app.config import Base, engine, sessionmaker, settings
-from app.routers import goals_api, quests_api
+from app.routers import findings_api, goals_api, participants_api, quests_api
 
 internal_router = APIRouter(prefix="/internal")
 internal_router.include_router(quests_api.router)
 internal_router.include_router(goals_api.router)
+internal_router.include_router(participants_api.router)
+internal_router.include_router(findings_api.router)
 
 
 async def reinit_database() -> None:  # pragma: no cover
