@@ -22,19 +22,16 @@ repos:
     rev: v1.6.0
     hooks:
       - id: autoflake
-        types_or: [python, pyi]
 
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
-        types_or: [python, pyi]
 
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 24.10.0
     hooks:
       - id: black
-        types_or: [python, pyi]
 
   - repo: local
     hooks:
@@ -49,16 +46,16 @@ repos:
       - id: mypy
         name: mypy (full)
         language: system
-        entry: mypy --config=backend/pyproject.toml --strict
+        entry: mypy --config=backend/pyproject.toml
         require_serial: true
         types_or: [python, pyi]
 
   - repo: https://github.com/python-poetry/poetry
     rev: 1.8.3
     hooks:
-      - id: poetry-check
-        args: ["--directory", "backend"]
       - id: poetry-lock
         args: ["--directory", "backend", "--no-update"]
+      - id: poetry-check
+        args: ["--directory", "backend"]
       - id: poetry-install
         args: ["--directory", "backend"]

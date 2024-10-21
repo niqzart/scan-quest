@@ -4,7 +4,7 @@ import asyncio
 import sys
 from collections.abc import Sequence
 from contextvars import ContextVar
-from typing import Any, Self, TypeVar
+from typing import Any, Self
 
 from sqlalchemy import Row, Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,8 +13,6 @@ if sys.platform == "win32":  # pragma: no cover
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 session_context: ContextVar[AsyncSession | None] = ContextVar("session", default=None)
-
-t = TypeVar("t", bound=Any)
 
 
 class DBController:

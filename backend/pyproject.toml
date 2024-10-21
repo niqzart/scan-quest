@@ -17,8 +17,8 @@ pydantic-settings = "^2.5.2"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 flake8 = "6.1.0"
-black = "24.4.2"
-isort = "^5.13.2"
+black = "24.10.0"
+isort = "5.13.2"
 pre-commit = "^3.2.1"
 mypy = "^1.12.0"
 flake8-pie = "0.16.0"
@@ -60,6 +60,9 @@ line_length = 88
 
 [tool.mypy]
 strict = true
+warn_unreachable = true
+warn_redundant_casts = true
+disable_error_code = ["prop-decorator"]  # computed_field
 plugins = [
     "pydantic.mypy",
     "pydantic_marshals.mypy.plugin"
