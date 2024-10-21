@@ -1,7 +1,7 @@
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.requests import Request
 from starlette.responses import Response
@@ -10,6 +10,11 @@ from starlette.staticfiles import StaticFiles
 from app.common.sqlalchemy_ext import session_context
 from app.common.starlette_cors_ext import CorrectCORSMiddleware
 from app.config import Base, engine, sessionmaker, settings
+from app.routers import goals_api, quests_api
+
+internal_router = APIRouter(prefix="/internal")
+internal_router.include_router(quests_api.router)
+internal_router.include_router(goals_api.router)
 
 
 async def reinit_database() -> None:  # pragma: no cover
@@ -27,6 +32,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(docs_url=None, redoc_url=None, lifespan=lifespan)
+
+app.include_router(internal_router)
 
 app.mount("/openapi-static", StaticFiles(directory="openapi-static"), name="static")
 

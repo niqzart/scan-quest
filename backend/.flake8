@@ -19,9 +19,11 @@ extend-ignore =
   # # not required or shadowed by other plugins
   D I FI TC Q U101 S101 WPS400
   # black
-  WPS220 WPS348 WPS352 E501 C812 C815 C816 E203
+  WPS220 WPS348 WPS352 E501 C812 C815 C816 C819 E203
   # mypy (for __init__)
   WPS410 WPS412
+  # sqlalchemy needs `id`
+  VNE003
 
   # # weird
   PIE803 C101 FNE007 FNE008 N812 ANN101 ANN102 WPS110 WPS111 WPS338 WPS407 WPS414 VNE001 CM001
@@ -29,7 +31,7 @@ extend-ignore =
   WPS201 WPS202 WPS204 WPS210 WPS211 WPS214 WPS217 WPS218 WPS221 WPS230 WPS231 WPS234 WPS235 WPS238
 
   # # broken
-  PIE798 WPS226 WPS354 WPS432 WPS473 WPS507
+  PIE798 WPS226 WPS354 WPS432 WPS473 WPS507 FNE004
   # fails to understand `raise NotImplementedError` and overloading
   U100
   # fails to understand enums
