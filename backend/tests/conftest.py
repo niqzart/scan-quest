@@ -3,7 +3,9 @@ from collections.abc import AsyncIterator, Iterator
 import pytest
 from starlette.testclient import TestClient
 
+from app.common.cryptography_ext import generate_secure_code
 from app.main import app
+from app.models.goals_db import Goal
 from app.models.quests_db import Quest
 from tests import factories
 from tests.common.active_session import ActiveSession
@@ -33,3 +35,16 @@ async def quest(active_session: ActiveSession) -> AsyncIterator[Quest]:
     yield quest
     async with active_session():
         await quest.delete()
+
+
+@pytest.fixture()
+async def goal(active_session: ActiveSession, quest: Quest) -> AsyncIterator[Goal]:
+    async with active_session():
+        goal = await Goal.create(
+            **factories.GoalInputFactory.build_python(),
+            quest_id=quest.id,
+            code=generate_secure_code(length=Goal.code_length),
+        )
+    yield goal
+    async with active_session():
+        await goal.delete()

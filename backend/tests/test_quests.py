@@ -6,6 +6,7 @@ from starlette.testclient import TestClient
 from app.models.quests_db import Quest
 from tests.common.active_session import ActiveSession
 from tests.common.assert_contains_ext import assert_response
+from tests.common.utils import orm_to_json
 from tests.factories import QuestInputFactory
 
 pytestmark = pytest.mark.anyio
@@ -32,9 +33,7 @@ async def test_quest_creation(
 async def test_quest_retrieving(client: TestClient, quest: Quest) -> None:
     assert_response(
         client.get(f"/internal/quests/{quest.id}"),
-        expected_json=Quest.ResponseSchema.model_validate(
-            quest, from_attributes=True
-        ).model_dump(mode="json"),
+        expected_json=orm_to_json(Quest.ResponseSchema, quest),
     )
 
 
