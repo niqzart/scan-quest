@@ -13,7 +13,7 @@ router = APIRouter(tags=["goals"])
 @router.post(
     "/quests/{quest_id}/goals",
     status_code=201,
-    response_model=Goal.ResponseSchema,
+    response_model=Goal.InternalResponseSchema,
 )
 async def create_quest_goal(quest: QuestByID, data: Goal.InputSchema) -> Goal:
     return await Goal.create(
@@ -23,17 +23,19 @@ async def create_quest_goal(quest: QuestByID, data: Goal.InputSchema) -> Goal:
     )
 
 
-@router.get("/quests/{quest_id}/goals", response_model=list[Goal.ResponseSchema])
+@router.get(
+    "/quests/{quest_id}/goals", response_model=list[Goal.InternalResponseSchema]
+)
 async def list_quest_goals(quest: QuestByID) -> Sequence[Goal]:
     return await Goal.find_all_by_kwargs(quest_id=quest.id)
 
 
-@router.get("/goals/{goal_id}", response_model=Goal.ResponseSchema)
+@router.get("/goals/{goal_id}", response_model=Goal.InternalResponseSchema)
 async def retrieve_quest_goal(goal: GoalByID) -> Goal:
     return goal
 
 
-@router.put("/goals/{goal_id}", response_model=Goal.ResponseSchema)
+@router.put("/goals/{goal_id}", response_model=Goal.InternalResponseSchema)
 async def update_quest_goal(goal: GoalByID, data: Goal.InputSchema) -> Goal:
     goal.update(**data.model_dump())
     return goal
