@@ -1,16 +1,40 @@
+import fetcher from "@/api/fetcher"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import * as React from "react"
 
-const Signup: React.FC = () => {
+export type SignupProps = {
+  code: string
+  onInvalidCode: () => void
+  onSuccess: () => void
+}
+
+const Signup: React.FC<SignupProps> = ({ code, onInvalidCode, onSuccess }) => {
   const [username, setUsername] = React.useState("")
+  const [usernameError, setUsernameError] = React.useState(false)
 
   const onChangeUsername: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     setUsername(event.target.value)
+    setUsernameError(false)
   }
 
   const register = () => {
-    console.log("Register!", username)
+    fetcher({
+      method: "POST",
+      path: "public/participants",
+      query: { code },
+      json: { username },
+    }).then(({ response, json }) => {
+      if (response.ok) {
+        onSuccess()
+      } else if (response.status === 404 && json.detail === "Goal not found") {
+        onInvalidCode()
+      } else if (response.status === 409 && json.detail === "Username is already taken") {
+        setUsernameError(true)
+      } else {
+        console.error(json)
+      }
+    }).catch(console.error)
   }
 
   return <>
@@ -24,9 +48,10 @@ const Signup: React.FC = () => {
       Let's go?
     </h2>
     <div className="mt-2 flex w-full items-center space-x-2">
-      <Input type="text" placeholder="Username" value={username} onChange={onChangeUsername} />
+      <Input className={usernameError ? "border-red-500 text-red-500" : ""} type="text" placeholder="Username" value={username} onChange={onChangeUsername} />
       <Button type="submit" onClick={register}>Join</Button>
     </div>
+    {usernameError && <p className="text-red-500 text-left text-sm">Username already taken</p>}
   </>
 }
 

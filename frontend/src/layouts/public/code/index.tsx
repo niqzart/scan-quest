@@ -46,7 +46,7 @@ const CodeLayout: React.FC<CodeLayoutProps> = ({ code }) => {
     <div className="max-w-[600px] m-auto">
       {viewMode === "loading" && <Loading />}
       {viewMode === "invalid-code" && <InvalidCode />}
-      {viewMode === "signup" && <Signup />}
+      {viewMode === "signup" && <Signup code={code} onInvalidCode={onInvalidCode} onSuccess={onSuccess} />}
       {viewMode === "success" && <Success />}
     </div>
   </main>
