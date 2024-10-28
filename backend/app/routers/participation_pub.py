@@ -88,7 +88,12 @@ async def retrieve_current_quest_data(participant: ParticipantByCookie) -> Quest
     response_model=list[Goal.PublicResponseSchema],
 )
 async def list_goals_found_by_me(participant: ParticipantByCookie) -> Sequence[Goal]:
-    stmt = select(Goal).join(Finding).filter(Finding.participant_id == participant.id)
+    stmt = (
+        select(Goal)
+        .join(Finding)
+        .filter(Finding.participant_id == participant.id)
+        .order_by(Goal.position)
+    )
     return cast(Sequence[Goal], await db.get_all(stmt))
 
 
