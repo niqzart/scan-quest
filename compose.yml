@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:17.0-alpine
+    restart: always
+    environment:
+      PGUSER: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    volumes:
+      - type: tmpfs  # for quik resets with each `docker compose down`
+        target: /var/lib/postgresql/data
+    ports:
+      - target: 5432
+        host_ip: 127.0.0.1
+        published: 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "test", "-U", "test"]
+      start_period: 60s
+      interval: 10s
+      timeout: 60s
+      retries: 5
+
+  app:
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    restart: always
+    command:
+      - "--reload"
+    environment:
+      WATCHFILES_FORCE_POLLING: true
+      postgres_host: db:5432
+      postgres_username: test
+      postgres_password: test
+      postgres_database: test
+      # postgres_automigrate: false
+      # postgres_echo: false
+    ports:
+      - target: 8000
+        host_ip: 127.0.0.1
+        published: 4800
+    volumes:
+      - type: bind
+        source: ./backend/app
+        target: /backend/app
