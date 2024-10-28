@@ -27,7 +27,7 @@ def anyio_backend() -> str:
 
 @pytest.fixture(scope="session")
 def client() -> Iterator[TestClient]:
-    with TestClient(app) as client:
+    with TestClient(app, base_url="http://localhost:4800/api") as client:
         yield client
 
 
@@ -86,5 +86,6 @@ async def finding(
 async def authorized_client(client: TestClient, participant: Participant) -> TestClient:
     return TestClient(
         app=client.app,
+        base_url=str(client.base_url),
         cookies={auth_cookie_name: participant.auth_token},
     )

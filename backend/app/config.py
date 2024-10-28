@@ -19,10 +19,10 @@ class Settings(BaseSettings):
         env_ignore_empty=True,
     )
 
-    postgres_host: str
-    postgres_username: str
-    postgres_password: str
-    postgres_database: str
+    postgres_host: str = "localhost:5432"
+    postgres_username: str = "test"
+    postgres_password: str = "test"
+    postgres_database: str = "test"
 
     @computed_field
     @property

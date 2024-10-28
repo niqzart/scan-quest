@@ -1,4 +1,4 @@
-const baseUrl = new URL("http://localhost:5000")
+const baseUrl = new URL("http://localhost:4800/api/")
 
 export type FetcherArgs = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE",

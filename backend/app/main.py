@@ -1,6 +1,7 @@
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 
+import uvicorn
 from fastapi import APIRouter, FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.requests import Request
@@ -18,13 +19,13 @@ from app.routers import (
     quests_api,
 )
 
-internal_router = APIRouter(prefix="/internal")
+internal_router = APIRouter(prefix="/api/internal")
 internal_router.include_router(quests_api.router)
 internal_router.include_router(goals_api.router)
 internal_router.include_router(participants_api.router)
 internal_router.include_router(findings_api.router)
 
-public_router = APIRouter(prefix="/public")
+public_router = APIRouter(prefix="/api/public")
 public_router.include_router(participation_pub.router)
 
 
@@ -77,3 +78,7 @@ async def database_session_middleware(
     async with sessionmaker.begin() as session:
         session_context.set(session)
         return await call_next(request)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, reload=True, port=4800)
