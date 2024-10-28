@@ -10,3 +10,8 @@ export type QuestT = {
   welcome_title: string,
   welcome_message: string,
 }
+
+export type QuestProgressT = {
+  found_goals: number,
+  total_goals: number,
+}

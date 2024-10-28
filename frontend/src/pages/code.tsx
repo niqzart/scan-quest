@@ -1,4 +1,3 @@
-
 import CodeLayout from "@/layouts/public/code"
 import type { HeadFC, PageProps } from "gatsby"
 import * as React from "react"

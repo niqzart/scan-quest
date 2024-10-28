@@ -20,9 +20,10 @@ class Goal(Base):
 
     code: Mapped[str] = mapped_column(String(code_length), index=True, unique=True)
 
+    position: Mapped[int] = mapped_column(index=True, unique=True)
     hint_title: Mapped[str] = mapped_column(String(100))
     hint_content: Mapped[str] = mapped_column(Text)
 
-    InputSchema = MappedModel.create(columns=[hint_title, hint_content])
+    InputSchema = MappedModel.create(columns=[position, hint_title, hint_content])
     PublicResponseSchema = InputSchema.extend(columns=[id])
     InternalResponseSchema = PublicResponseSchema.extend(columns=[code])
