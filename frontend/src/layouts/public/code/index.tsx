@@ -1,4 +1,5 @@
 import fetcher from "@/api/fetcher"
+import { FindingT } from "@/api/types"
 import * as React from "react"
 import InvalidCode from "./invalid-code"
 import Loading from "./loading"
@@ -14,9 +15,14 @@ type ViewModeT = "loading" | "invalid-code" | "signup" | "success"
 const CodeLayout: React.FC<CodeLayoutProps> = ({ code }) => {
   const [viewMode, setViewMode] = React.useState<ViewModeT>("loading")
 
+  const [finding, setFinding] = React.useState<FindingT | null>(null)
+
   const onInvalidCode = () => setViewMode("invalid-code")
   const onAuthRequired = () => setViewMode("signup")
-  const onSuccess = () => setViewMode("success")
+  const onSuccess = (finding: FindingT) => {
+    setFinding(finding)
+    setViewMode("success")
+  }
 
   React.useEffect(() => {
     if (viewMode !== "loading") return
@@ -27,14 +33,14 @@ const CodeLayout: React.FC<CodeLayoutProps> = ({ code }) => {
     }).then(({ response, json }) => {
       if (response.ok) {
         // TODO get data from newly found goal
-        onSuccess()
+        onSuccess(json as FindingT)
       } else if (response.status === 401) {
         onAuthRequired()
       } else if (response.status === 404 && json.detail === "Goal not found") {
         onInvalidCode()
-      } else if (response.status === 409 && json.detail === "Finding already exists") {
+      } else if (response.status === 409 && json.detail === undefined) {
         // TODO show a different message
-        onSuccess()
+        onSuccess(json as FindingT)
       } else {
         // TODO error handling
         console.error(json)
@@ -47,7 +53,7 @@ const CodeLayout: React.FC<CodeLayoutProps> = ({ code }) => {
       {viewMode === "loading" && <Loading />}
       {viewMode === "invalid-code" && <InvalidCode />}
       {viewMode === "signup" && <Signup code={code} onInvalidCode={onInvalidCode} onSuccess={onSuccess} />}
-      {viewMode === "success" && <Success />}
+      {viewMode === "success" && finding !== null && <Success finding={finding} />}
     </div>
   </main>
 }

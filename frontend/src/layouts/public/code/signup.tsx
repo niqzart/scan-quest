@@ -1,4 +1,5 @@
 import fetcher from "@/api/fetcher"
+import { FindingT } from "@/api/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import * as React from "react"
@@ -6,7 +7,7 @@ import * as React from "react"
 export type SignupProps = {
   code: string
   onInvalidCode: () => void
-  onSuccess: () => void
+  onSuccess: (finding: FindingT) => void
 }
 
 const Signup: React.FC<SignupProps> = ({ code, onInvalidCode, onSuccess }) => {
@@ -26,7 +27,7 @@ const Signup: React.FC<SignupProps> = ({ code, onInvalidCode, onSuccess }) => {
       json: { username },
     }).then(({ response, json }) => {
       if (response.ok) {
-        onSuccess()
+        onSuccess(json as FindingT)
       } else if (response.status === 404 && json.detail === "Goal not found") {
         onInvalidCode()
       } else if (response.status === 409 && json.detail === "Username is already taken") {
