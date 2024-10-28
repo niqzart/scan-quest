@@ -1,8 +1,8 @@
 import fetcher from "@/api/fetcher"
 import { FindingT } from "@/api/types"
+import LoadingSpinner from "@/components/ui/loader"
 import * as React from "react"
 import InvalidCode from "./invalid-code"
-import Loading from "./loading"
 import Signup from "./signup"
 import Success from "./success"
 
@@ -50,7 +50,7 @@ const CodeLayout: React.FC<CodeLayoutProps> = ({ code }) => {
 
   return <main className="w-screen h-screen content-center text-center p-2">
     <div className="max-w-[600px] m-auto">
-      {viewMode === "loading" && <Loading />}
+      {viewMode === "loading" && <LoadingSpinner size={64} className="text-primary mx-auto" />}
       {viewMode === "invalid-code" && <InvalidCode />}
       {viewMode === "signup" && <Signup code={code} onInvalidCode={onInvalidCode} onSuccess={onSuccess} />}
       {viewMode === "success" && finding !== null && <Success finding={finding} />}
