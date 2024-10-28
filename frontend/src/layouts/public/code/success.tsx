@@ -1,7 +1,26 @@
 import fetcher from "@/api/fetcher"
 import { FindingT, QuestProgressT } from "@/api/types"
+import { Button } from "@/components/ui/button"
 import LoadingSpinner from "@/components/ui/loader"
+import { Link } from "gatsby"
 import * as React from "react"
+
+type ProgressProps = {
+  questProgress: QuestProgressT
+}
+
+const Progress: React.FC<ProgressProps> = ({ questProgress }) => {
+  return <>
+    <h2 className="text-xl font-bold text-primary mt-2">
+      Found: {questProgress.found_goals}/{questProgress.total_goals}
+    </h2>
+    <Button asChild>
+      <Link to="/findings">
+        View All Findings
+      </Link>
+    </Button>
+  </>
+}
 
 export type SuccessProps = {
   finding: FindingT
@@ -36,7 +55,7 @@ const Success: React.FC<SuccessProps> = ({ finding }) => {
     {
       questProgress === null
         ? <LoadingSpinner className="text-primary mx-auto mt-2" size={32} />
-        : <h2 className="text-xl font-bold text-primary">Found: {questProgress.found_goals}/{questProgress.total_goals}</h2>
+        : <Progress questProgress={questProgress} />
     }
   </>
 }
