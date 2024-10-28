@@ -19,13 +19,13 @@ from app.routers import (
     quests_api,
 )
 
-internal_router = APIRouter(prefix="/internal")
+internal_router = APIRouter(prefix="/api/internal")
 internal_router.include_router(quests_api.router)
 internal_router.include_router(goals_api.router)
 internal_router.include_router(participants_api.router)
 internal_router.include_router(findings_api.router)
 
-public_router = APIRouter(prefix="/public")
+public_router = APIRouter(prefix="/api/public")
 public_router.include_router(participation_pub.router)
 
 
