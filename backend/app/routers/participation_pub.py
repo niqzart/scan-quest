@@ -2,6 +2,7 @@ from collections.abc import Sequence
 from typing import cast
 
 from fastapi import APIRouter, HTTPException, Response
+from pydantic import BaseModel
 from sqlalchemy import select
 
 from app.common.cryptography_ext import generate_secure_code
@@ -89,3 +90,20 @@ async def retrieve_current_quest_data(participant: ParticipantByCookie) -> Quest
 async def list_goals_found_by_me(participant: ParticipantByCookie) -> Sequence[Goal]:
     stmt = select(Goal).join(Finding).filter(Finding.participant_id == participant.id)
     return cast(Sequence[Goal], await db.get_all(stmt))
+
+
+class QuestProgressSchema(BaseModel):
+    found_goals: int
+    total_goals: int
+
+
+@router.get("/participants/me/quest-progress")
+async def retrieve_current_quest_progress(
+    participant: ParticipantByCookie,
+) -> QuestProgressSchema:
+    return QuestProgressSchema(
+        found_goals=await Finding.count_by_kwargs(
+            Finding.goal_id, participant_id=participant.id
+        ),
+        total_goals=await Goal.count_by_kwargs(Goal.id, quest_id=participant.quest_id),
+    )

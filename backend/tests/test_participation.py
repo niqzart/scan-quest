@@ -103,6 +103,20 @@ async def test_retrieving_quest_data_with_authorization(
     )
 
 
+async def test_retrieving_quest_progress(
+    authorized_client: TestClient,
+    quest: Quest,
+    finding: Finding,
+) -> None:
+    assert_response(
+        authorized_client.get("/public/participants/me/quest-progress"),
+        expected_json={
+            "found_goals": 1,
+            "total_goals": 1,
+        },
+    )
+
+
 async def test_listing_my_findings(
     authorized_client: TestClient,
     goal: Goal,
