@@ -1,7 +1,21 @@
 import fetcher from "@/api/fetcher"
 import { FindingT } from "@/api/types"
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import LoadingSpinner from "@/components/ui/loader"
 import * as React from "react"
+
+type FindingCardProps = {
+  finding: FindingT
+}
+
+const FindingCard: React.FC<FindingCardProps> = ({ finding }) => {
+  return <Card className="border-primary">
+    <CardContent className="w-full pt-1 pb-2 ">
+      <CardTitle>{finding.hint_title}</CardTitle>
+      <CardDescription className="text-justify">{finding.hint_content}</CardDescription>
+    </CardContent>
+  </Card>
+}
 
 const FindingsLayout: React.FC = () => {
   const [findings, setFindings] = React.useState<FindingT[] | null>(null)
@@ -20,22 +34,19 @@ const FindingsLayout: React.FC = () => {
     }).catch(console.error)
   })
 
-  return <main className="w-screen h-screen text-center p-2">
+  return <main className="w-screen h-screen text-center p-2 overflow-x-hidden">
     <div className="max-w-[600px] m-auto">
-      <h1 className="mt-2 scroll-m-20 text-4xl font-extrabold tracking-tight text-primary">
+      <h1 className="my-2 scroll-m-20 text-4xl font-extrabold tracking-tight text-primary">
         Findings
       </h1>
       {
         findings === null
           ? <LoadingSpinner size={64} className="text-primary mx-auto" />
-          : <>
-            {findings.map((finding, i) => (
-              <div key={i} className="mt-4 flex w-full items-center space-x-2">
-                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">{finding.hint_title}</h4>
-                <p>{finding.hint_content}</p>
-              </div>
-            ))}
-          </>
+          : <div className="space-y-3">
+            {findings.map((finding, i) => <div key={i}>
+              <FindingCard finding={finding} />
+            </div>)}
+          </div>
       }
     </div>
   </main>
