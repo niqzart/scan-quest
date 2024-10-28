@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 from freezegun import freeze_time
 from starlette.testclient import TestClient
@@ -45,25 +43,26 @@ async def test_signing_up_by_code(
                 params={"code": goal.code},
                 json=participant_data,
             ),
-            expected_json={"id": UUID, "quest_id": goal.quest_id, **participant_data},
+            expected_json=orm_to_json(Goal.PublicResponseSchema, goal),
             expected_cookies={auth_cookie_name: str},
         )
 
-    participant_id = response.json()["id"]
     participant_auth_token = response.cookies[auth_cookie_name]
 
     async with active_session():
+        participant = await Participant.find_first_by_kwargs(
+            auth_token=participant_auth_token
+        )
+        assert participant is not None
+
         finding = await Finding.find_first_by_kwargs(
-            participant_id=participant_id,
+            participant_id=participant.id,
             goal_id=goal.id,
         )
         assert finding is not None
         assert finding.created_at == expected_created_at
         await finding.delete()
 
-        participant = await Participant.find_first_by_id(participant_id)
-        assert participant is not None
-        assert participant.auth_token == participant_auth_token
         await participant.delete()
 
 
@@ -81,8 +80,7 @@ async def test_finding(
                 "/public/participants/me/found-goals",
                 params={"code": goal.code},
             ),
-            expected_code=204,
-            expected_json=None,
+            expected_json=orm_to_json(Goal.PublicResponseSchema, goal),
         )
 
     async with active_session():
