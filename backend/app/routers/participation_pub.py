@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from typing import cast
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from sqlalchemy import select
 
 from app.common.cryptography_ext import generate_secure_code
@@ -12,7 +12,6 @@ from app.models.participants_db import Participant
 from app.models.quests_db import Quest
 from app.routers.dependencies.authorization import AuthCookieSetter, ParticipantByCookie
 from app.routers.dependencies.goals_dep import GoalByCode
-from app.routers.findings_api import finding_already_exists_exception
 
 router = APIRouter(tags=["participation"])
 
@@ -29,13 +28,13 @@ username_already_taken_exception = HTTPException(
 
 @router.post(
     "/participants",
-    response_model=Participant.ResponseSchema,
+    response_model=Goal.PublicResponseSchema,
 )
 async def signup_by_code(
     goal: GoalByCode,
     data: Participant.InputSchema,
     auth_cookie_setter: AuthCookieSetter,
-) -> Participant:
+) -> Goal:
     participant_by_username = await Participant.find_first_by_kwargs(
         username=data.username,
         quest_id=goal.quest_id,
@@ -51,26 +50,31 @@ async def signup_by_code(
     await Finding.create(participant_id=participant.id, goal_id=goal.id)
 
     auth_cookie_setter(auth_token=participant.auth_token)
-    return participant
+    return goal
 
 
-@router.post("/participants/me/found-goals", status_code=204)
+@router.post(
+    "/participants/me/found-goals",
+    response_model=Goal.PublicResponseSchema,
+)
 async def add_goal_to_my_findings(
-    participant: ParticipantByCookie,
     goal: GoalByCode,
-) -> None:
+    participant: ParticipantByCookie,
+    response: Response,
+) -> Goal:
     finding = await Finding.find_first_by_kwargs(
         participant_id=participant.id,
         goal_id=goal.id,
     )
     if finding is not None:
-        raise finding_already_exists_exception
+        response.status_code = 409
+        return goal
 
     await Finding.create(
         participant_id=participant.id,
         goal_id=goal.id,
     )
-    # TODO return something (like hints) in the future
+    return goal
 
 
 @router.get("/participants/me/quest", response_model=Quest.ResponseSchema)
