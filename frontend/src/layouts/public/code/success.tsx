@@ -7,15 +7,14 @@ export type SuccessProps = {
 
 const Success: React.FC<SuccessProps> = ({ finding }) => {
   return <>
-    <h1 className="text-3xl font-extrabold tracking-tight text-primary">
-      Code Found!
-    </h1>
-    <h2 className="text-xl font-bold text-primary">
+    <h1 className="text-3xl font-extrabold tracking-tight text-primary mb-2">
       {finding.hint_title}
-    </h2>
-    <p>
-      {finding.hint_content}
-    </p>
+    </h1>
+    {finding.hint_content.split("\n").map((item, key) => (
+      <p className="text-justify" key={key}>
+        {item}
+      </p>
+    ))}
   </>
 }
 
