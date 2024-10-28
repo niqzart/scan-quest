@@ -2,7 +2,7 @@ from typing import Final
 from uuid import UUID, uuid4
 
 from pydantic_marshals.sqlalchemy import MappedModel
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config import Base
@@ -20,6 +20,9 @@ class Goal(Base):
 
     code: Mapped[str] = mapped_column(String(code_length), index=True, unique=True)
 
-    InputSchema = MappedModel.create()
+    hint_title: Mapped[str] = mapped_column(String(100))
+    hint_content: Mapped[str] = mapped_column(Text)
+
+    InputSchema = MappedModel.create(columns=[hint_title, hint_content])
     PublicResponseSchema = InputSchema.extend(columns=[id])
     InternalResponseSchema = PublicResponseSchema.extend(columns=[code])
